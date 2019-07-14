@@ -30,10 +30,11 @@ namespace ConsoleApp1
 
         private void _createSteream()
         {
+			sw?.Close();
+            sw?.Dispose();
             logstream?.Close();
             logstream?.Dispose();
-            sw?.Close();
-            sw?.Dispose();
+
             string logpath = new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.FullName + @"\face-log";
             if (Directory.Exists(logpath) == false)//如果不存在就创建file文件夹
             {
