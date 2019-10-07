@@ -13,8 +13,8 @@ namespace FaceDistinguishSDK
         SocketHelper socketHelper;
         Client client;
         CameraConnection camera;
-        readonly string startTime = "00:00";
-        readonly string endTime = "23:59";
+        string startTime;
+        string endTime;
 
         string imgpath;
 
@@ -25,6 +25,7 @@ namespace FaceDistinguishSDK
             client = new Client();
             startTime = ConfigurationManager.AppSettings["start_time"];
             endTime = ConfigurationManager.AppSettings["end_time"];
+            LogHelper.Init.Log("工作时间段:" + startTime + "-" + endTime);
             start = DateTime.Parse(startTime).TimeOfDay;
             end = DateTime.Parse(endTime).TimeOfDay;
         }
