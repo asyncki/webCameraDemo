@@ -20,9 +20,8 @@ namespace FaceDistinguishSDK
 
         object sync = new object();
 
-        bool isClosed = true;
 
-        public bool IsClosed { get => isClosed; set => isClosed = value; }
+        public bool IsClosed { get; set; } = true;
 
         IPEndPoint iPEndPoint;
 
@@ -66,9 +65,9 @@ namespace FaceDistinguishSDK
             {
                 try
                 {
-                    client.Shutdown(SocketShutdown.Both);
-                    client.Close();
-                    client.Dispose();//素质三连
+                    client?.Shutdown(SocketShutdown.Both);
+                    client?.Close();
+                    client?.Dispose();//素质三连
                     IsClosed = true;
                 }
                 catch (Exception e)
@@ -95,6 +94,9 @@ namespace FaceDistinguishSDK
         {
             try
             {
+                if (IsClosed) {
+                    return;
+                }
                 int len = client.EndReceive(re);
                 if (len > 1)
                 {

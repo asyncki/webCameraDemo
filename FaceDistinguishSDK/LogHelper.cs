@@ -28,11 +28,7 @@ namespace FaceDistinguishSDK
 
         private void _createStream()
         {
-			sw?.Close();
-            sw?.Dispose();
-            logstream?.Close();
-            logstream?.Dispose();
-
+            close();
             string logpath = ConfigurationManager.AppSettings["path"] + @"\face-log";
             string imgpath = ConfigurationManager.AppSettings["path"] + @"\img";
             if (Directory.Exists(logpath) == false)//如果不存在就创建file文件夹
@@ -73,6 +69,15 @@ namespace FaceDistinguishSDK
                 sw.WriteLine(infoWithTime);
                 sw.Flush();
             }
+        }
+
+        public void close() {
+            sw?.Close();
+            sw?.Dispose();
+            logstream?.Close();
+            logstream?.Dispose();
+            sw = null;
+            logstream = null;
         }
 
     }

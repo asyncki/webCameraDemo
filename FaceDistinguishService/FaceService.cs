@@ -54,6 +54,7 @@ namespace FaceDistinguishService
         protected override void OnStop()
         {
             worker.StopWork();
+            LogHelper.Init.close();
             Thread.Sleep(2000);
         }
     }
