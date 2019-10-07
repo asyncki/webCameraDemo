@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace FaceDistinguishService
+namespace FaceDistinguishSDK
 {
     public class SocketHelper
     {

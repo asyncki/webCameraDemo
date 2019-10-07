@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
+﻿using FaceDistinguishSDK;
+using System;
 using System.ServiceProcess;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace FaceDistinguishService
 {
@@ -34,12 +27,7 @@ namespace FaceDistinguishService
                     {
                         worker = new Worker();
                         //worker.StartWork(@"C:\Users\test\Desktop\mylog", "172.27.16.94", 8000, "admin", "12345");
-                        worker.StartWorkII(ConfigurationManager.AppSettings["logpath"],
-                            ConfigurationManager.AppSettings["camera_IP"],
-                            int.Parse(ConfigurationManager.AppSettings["camera_port"]),
-                            ConfigurationManager.AppSettings["userName"],
-                            ConfigurationManager.AppSettings["passWord"]);
-                        LogHelper.Init.Log("主循环try块正常结束");
+                        worker.StartWork();
                     }
                     catch (Exception e)
                     {
@@ -66,7 +54,7 @@ namespace FaceDistinguishService
         protected override void OnStop()
         {
             worker.StopWork();
-            Thread.Sleep(5000);
+            Thread.Sleep(2000);
         }
     }
 }

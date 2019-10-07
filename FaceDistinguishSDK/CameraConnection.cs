@@ -2,7 +2,6 @@
 using System.Drawing;
 using NeededSDK;
 using System.IO;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 namespace FaceDistinguishSDK
@@ -134,31 +133,6 @@ namespace FaceDistinguishSDK
 
         }
 
-        public Bitmap GetShotPicture()
-        {
-            if (m_lRealHandle >= 0)
-            {
-                byte[] array = new byte[1024 * 1024];
-                uint length = 0;
-                CHCNetSDK.NET_DVR_JPEGPARA lpJpegPara = new CHCNetSDK.NET_DVR_JPEGPARA();
-                lpJpegPara.wPicQuality = 0; //图像质量 Image quality
-                lpJpegPara.wPicSize = 5; //抓图分辨率 Picture size: 2- 4CIF，0xff- Auto(使用当前码流分辨率)，抓图分辨率需要设备支持，更多取值请参考SDK文档
-                if (CHCNetSDK.NET_DVR_CaptureJPEGPicture_NEW(m_lUserID, 1, ref lpJpegPara, array, 1024 * 768, ref length))
-                {
-                    return BytesToBitmap(array, (int)length);
-                }
-                else
-                {
-                    CHCNetSDK.NET_DVR_Cleanup();
-                    throw new Exception("NET_DVR_CaptureJPEGPicture_NEW failed, errorCode: " + CHCNetSDK.NET_DVR_GetLastError());
-                }
-            }
-            else
-            {
-                throw new Exception("Please startcapture firstly");
-            }
-        }
-
         public static Bitmap BytesToBitmap(byte[] Bytes, int length)
         {
             MemoryStream stream = null;
@@ -181,73 +155,8 @@ namespace FaceDistinguishSDK
             }
         }
 
-        public void RealDataCallBack(Int32 lRealHandle, UInt32 dwDataType, ref byte pBuffer, UInt32 dwBufSize, IntPtr pUser)
-        {
-            //Console.WriteLine("RealDataCallBack");
-        }
-
-        public void StartCapture(PictureBox pictureBox)
-        {
-            if (m_lUserID < 0)
-            {
-                throw new Exception("Please login the device firstly");
-            }
-
-            if (m_lRealHandle < 0)
-            {
-                CHCNetSDK.NET_DVR_PREVIEWINFO lpPreviewInfo = new CHCNetSDK.NET_DVR_PREVIEWINFO();
-                lpPreviewInfo.hPlayWnd = pictureBox.Handle;//预览窗口
-                lpPreviewInfo.lChannel = 1;//预te览的设备通道
-                lpPreviewInfo.dwStreamType = 0;//码流类型：0-主码流，1-子码流，2-码流3，3-码流4，以此类推
-                lpPreviewInfo.dwLinkMode = 1;//连接方式：0- TCP方式，1- UDP方式，2- 多播方式，3- RTP方式，4-RTP/RTSP，5-RSTP/HTTP 
-                lpPreviewInfo.bBlocked = false; //0- 非阻塞取流，1- 阻塞取流
-
-                CHCNetSDK.REALDATACALLBACK RealData = new CHCNetSDK.REALDATACALLBACK(RealDataCallBack);//预览实时流回调函数
-                IntPtr pUser = new IntPtr();//用户数据
-
-                //打开预览 Start live view 
-                m_lRealHandle = CHCNetSDK.NET_DVR_RealPlay_V40(m_lUserID, ref lpPreviewInfo, /*RealData*/null, pUser);
-                if (m_lRealHandle < 0)
-                {
-                    CHCNetSDK.NET_DVR_Cleanup();
-                    throw new Exception("NET_DVR_RealPlay_V40 failed, errorcode: " + CHCNetSDK.NET_DVR_GetLastError());
-                    //预览失败，输出错误号
-                }
-                else
-                {
-                    //预览成功
-                    //btnPreview.Text = "Stop Live View";
-                    //timer1.Enabled = true;
-                }
-            }
-            else
-            {
-                throw new Exception("cannot start twice!");
-            }
-        }
-
-        public void StopCapture()
-        {
-            if (m_lRealHandle >= 0)
-            {
-                //停止预览 Stop live view 
-                if (!CHCNetSDK.NET_DVR_StopRealPlay(m_lRealHandle))
-                {
-                    CHCNetSDK.NET_DVR_Cleanup();
-                    throw new Exception("NET_DVR_StopRealPlay failed, errorcode: " + CHCNetSDK.NET_DVR_GetLastError());
-                }
-                m_lRealHandle = -1;
-                //btnPreview.Text = "Live View";
-            }
-            else
-            {
-                throw new Exception("cannot stop twice");
-            }
-        }
-
         public void Dispose()
         {
-
             CHCNetSDK.NET_DVR_Cleanup();
         }
     }

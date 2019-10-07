@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FaceDistinguishService
+namespace FaceDistinguishSDK
 {
     public class LogHelper
     {
@@ -36,10 +33,15 @@ namespace FaceDistinguishService
             logstream?.Close();
             logstream?.Dispose();
 
-            string logpath = ConfigurationManager.AppSettings["logpath"] + @"\face-log";
+            string logpath = ConfigurationManager.AppSettings["path"] + @"\face-log";
+            string imgpath = ConfigurationManager.AppSettings["path"] + @"\img";
             if (Directory.Exists(logpath) == false)//如果不存在就创建file文件夹
             {
                 Directory.CreateDirectory(logpath);
+            }
+            if (Directory.Exists(imgpath) == false)//如果不存在就创建file文件夹
+            {
+                Directory.CreateDirectory(imgpath);
             }
             string logfile = logpath + '\\' + DateTime.Now.ToLocalTime().ToString("yyyy-MM-dd") + ".txt";
             today = DateTime.Now.ToLocalTime().Date;
@@ -66,6 +68,8 @@ namespace FaceDistinguishService
                     today = now.Date;
                 }
                 string infoWithTime = now + ":" + info;
+                Console.WriteLine();
+                Console.WriteLine(infoWithTime);
                 sw.WriteLine(infoWithTime);
                 sw.Flush();
             }

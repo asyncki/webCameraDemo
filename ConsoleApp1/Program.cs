@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Configuration;
-
+using FaceDistinguishSDK;
 
 namespace ConsoleApp1
 {
@@ -21,11 +21,7 @@ namespace ConsoleApp1
                     {
                         worker = new Worker();
                         //worker.StartWork(@"C:\Users\test\Desktop\mylog", "172.27.16.94", 8000, "admin", "12345");
-                        worker.StartWorkII(ConfigurationManager.AppSettings["logpath"], 
-                            ConfigurationManager.AppSettings["camera_IP"], 
-                            int.Parse(ConfigurationManager.AppSettings["camera_port"]),
-                            ConfigurationManager.AppSettings["userName"], 
-                            ConfigurationManager.AppSettings["passWord"]);
+                        worker.StartWork();
                         LogHelper.Init.Log("主循环try块正常结束");
                     }
                     catch (Exception e)
@@ -41,8 +37,8 @@ namespace ConsoleApp1
                         }
                         worker.StopWork();
                         GC.Collect();
-                        LogHelper.Init.Log("休眠6秒..");
-                        Thread.Sleep(6000);
+                        LogHelper.Init.Log("休眠60秒..");
+                        Thread.Sleep(60000);
                     }
                 }
             });
