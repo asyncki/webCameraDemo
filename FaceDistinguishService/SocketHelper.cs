@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace ConsoleApp1
+namespace FaceDistinguishService
 {
     public class SocketHelper
     {
@@ -132,7 +132,7 @@ namespace ConsoleApp1
                     int length = str.Length;
                     if (length > 1)
                     {
-                        Console.WriteLine("写入：" + length);
+                        LogHelper.Init.Log("写入：" + length);
                         byte[] buffer = System.Text.Encoding.UTF8.GetBytes(str);
                         client.Send(buffer, buffer.Length, SocketFlags.None);
                     }

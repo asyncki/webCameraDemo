@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Threading;
 using System.Configuration;
 using FaceDistinguishSDK;
 using FaceDistinguishSDK.NetWork;
-namespace ConsoleApp1
+using System.Drawing.Imaging;
+
+namespace FaceDistinguishService
 {
     public class Worker
     {
@@ -14,6 +15,8 @@ namespace ConsoleApp1
         Client client;
         string startTime = "00:00";
         string endTime = "23:59";
+
+        string logpath;
 
         TimeSpan start;
         TimeSpan end;
@@ -42,6 +45,7 @@ namespace ConsoleApp1
             {
                 return;
             }
+            this.logpath = logPath;
             socketHelper.OnReadFinish += ReadFinish;
             socketHelper.StartReceive();
             CameraConnection camera = new CameraConnection(logPath, IP, port, userName, passWord, CallBack);
@@ -63,19 +67,20 @@ namespace ConsoleApp1
             if (!busy)
             {
                 busy = true;
-                Console.Write(" CallBack ");
-                if (client.CheckFaceIdentity(picture, "test.jpg", new string[] { "manager", "user" }, out string restr))
+                LogHelper.Init.Log(" CallBack ");
+                string restr;
+                if (client.CheckFaceIdentity(picture, "test.jpg", new string[] { "manager", "user" }, out restr))
                 {
                     if (restr.Length > 2 && restr.IndexOf("SDK_IMAGE_FACEDETECT_FAILED") == -1)
                     {
                         LogHelper.Init.Log("人脸识别成功：" + restr);
                         socketHelper.Write(restr);
-                        picture.Save(Environment.CurrentDirectory + "\\img\\" + DateTime.Now.ToLocalTime().ToString("yyyyMMdd_HHmmss") + "成功.jpg", ImageFormat.Jpeg);
+                        picture.Save(logpath + "\\img\\" + DateTime.Now.ToLocalTime().ToString("yyyyMMdd_HHmmss") + "成功.jpg", ImageFormat.Jpeg);
                     }
                     else
                     {
                         LogHelper.Init.Log("人脸识别失败：" + restr);
-                        picture.Save(Environment.CurrentDirectory + "\\img\\" + DateTime.Now.ToLocalTime().ToString("yyyyMMdd_HHmmss") + "失败.jpg", ImageFormat.Jpeg);
+                        picture.Save(logpath + "\\img\\" + DateTime.Now.ToLocalTime().ToString("yyyyMMdd_HHmmss") + "失败.jpg", ImageFormat.Jpeg);
                     }
                 }
                 else
