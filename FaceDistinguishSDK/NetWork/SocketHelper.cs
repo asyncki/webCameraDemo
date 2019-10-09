@@ -74,7 +74,6 @@ namespace FaceDistinguishSDK
                 {
                     LogHelper.Init.Log("sockethelper stop error: " + e.Message);
                 }
-
             }
         }
 
@@ -118,7 +117,7 @@ namespace FaceDistinguishSDK
                     LogHelper.Init.Log("重新连接服务器");
                     Start();
                     // 重连等待1秒
-                    if (IsClosed) Thread.Sleep(1000);
+                    if (IsClosed) Thread.Sleep(5000);
                     else StartReceive();
                 }
             }

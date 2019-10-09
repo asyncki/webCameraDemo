@@ -41,10 +41,18 @@ namespace FaceDistinguishService
                             lastError = e.Message;
                             LogHelper.Init.Log("错误：" + e.Message + e.StackTrace);
                         }
+                    }
+                    try
+                    {
                         worker.StopWork();
                         GC.Collect();
                         LogHelper.Init.Log("休眠60秒..");
                         Thread.Sleep(60000);
+                    }
+                    catch (Exception e)
+                    {
+                        // 无能为力
+                        LogHelper.Init.Log("错误：" + e.Message + e.StackTrace);
                     }
                 }
             });
