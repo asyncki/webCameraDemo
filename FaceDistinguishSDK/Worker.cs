@@ -4,6 +4,8 @@ using System.Drawing.Imaging;
 using System.Threading;
 using System.Configuration;
 using FaceDistinguishSDK.NetWork;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace FaceDistinguishSDK
 {
@@ -63,18 +65,25 @@ namespace FaceDistinguishSDK
                 camera.HeartBeat();
             }
         }
+
         bool busy = false;
+        DateTime lastSuccess = DateTime.Now;
         public void CallBack(Bitmap picture)
         {
             try
             {
-                TimeSpan now = DateTime.Now.TimeOfDay;
+                TimeSpan nowTimeOfDay = DateTime.Now.TimeOfDay;
                 string dateTimeStr = DateTime.Now.ToLocalTime().ToString("yyyyMMdd_HHmmss");
-                if (now < start || now > end)
+                if (nowTimeOfDay < start || nowTimeOfDay > end)
                 {
                     // 如果不在工作时间就返回，不发请求
                     LogHelper.Init.Log("工作时间外的触发。");
                     picture.Save(imgpath + dateTimeStr + "工时外.jpg", ImageFormat.Jpeg);
+                    return;
+                }
+                DateTime startT = DateTime.Now;
+                if (startT.Subtract(lastSuccess).TotalMilliseconds < 1000)
+                {
                     return;
                 }
                 if (!busy)
@@ -87,6 +96,7 @@ namespace FaceDistinguishSDK
                             LogHelper.Init.Log("人脸识别成功：" + restr);
                             socketHelper.Write(restr);
                             picture.Save(imgpath + dateTimeStr + "成功.jpg", ImageFormat.Jpeg);
+                            lastSuccess = DateTime.Now;
                         }
                         else
                         {
@@ -106,6 +116,10 @@ namespace FaceDistinguishSDK
                     LogHelper.Init.Log("人脸识别遇忙。");
                     picture.Save(imgpath + dateTimeStr + "遇忙.jpg", ImageFormat.Jpeg);
                 }
+                DateTime afterTime = DateTime.Now;
+                TimeSpan timeUse = afterTime.Subtract(startT);
+                
+                LogHelper.Init.Log("耗时：" + timeUse.TotalMilliseconds+"ms");
             }
             catch (Exception e)
             {
